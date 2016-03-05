@@ -1,0 +1,23 @@
+default:
+    formatters:
+        pretty:
+            verbose:  true
+            paths:    false
+            snippets: false
+
+    suites:
+        web:
+            contexts:
+                - Resources\Behat\WebContext
+    extensions:
+        Behat\MinkExtension:
+            base_url: http://test.project_name.loc/
+            sessions:
+                default:
+                    symfony2: ~
+                javascript:
+                    selenium2: ~
+            browser_name: firefox
+            show_auto:    false
+            files_path: /vagrant/
+        Behat\Symfony2Extension: ~

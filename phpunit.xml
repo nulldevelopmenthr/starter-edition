@@ -18,6 +18,16 @@
         </testsuite>
     </testsuites>
 
+    <listeners>
+        <listener class="\Mockery\Adapter\Phpunit\TestListener" file="Mockery/Adapter/Phpunit/TestListener.php">
+        </listener>
+    </listeners>
+
+    <logging>
+        <log type="coverage-php" target="build/cov/coverage.cov"/>
+        <log type="coverage-clover" target="build/logs/clover.xml"/>
+    </logging>
+
     <filter>
         <whitelist>
             <directory>src</directory>
@@ -28,4 +38,5 @@
             </exclude>
         </whitelist>
     </filter>
+
 </phpunit>
