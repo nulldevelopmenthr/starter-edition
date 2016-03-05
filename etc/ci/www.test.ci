@@ -1,0 +1,16 @@
+<VirtualHost *:80>
+  LoadModule php5_module /home/ubuntu/.phpenv/versions/PHP_VERSION/libexec/libphp5.so
+  
+  DocumentRoot /home/ubuntu/PROJECT_NAME/web/
+  ServerName www.test.ci
+
+  <Directory "/home/ubuntu/PROJECT_NAME/web/">
+      Options All
+      AllowOverride All
+  </Directory>
+	ErrorLog /var/log/apache2/PROJECT_NAME-error.log
+	LogLevel warn
+
+	CustomLog /var/log/apache2/PROJECT_NAME-access.log combined
+	ServerSignature On
+</VirtualHost>

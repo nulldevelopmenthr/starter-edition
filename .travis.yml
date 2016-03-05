@@ -1,0 +1,62 @@
+language: php
+addons:
+  apt:
+    packages:
+      - xvfb
+
+sudo: false
+matrix:
+    include:
+        - php: 5.6
+          env: coverage=phpunit
+        - php: 5.6
+          env: coverage=phpspec
+        - php: 7.0
+        - php: 5.6
+        - php: 5.5
+    fast_finish: true
+env:
+  global:
+    - COMPOSER_DISCARD_CHANGES=true
+
+cache:
+  directories:
+    - vendor
+    - bin
+
+before_script:
+  - sh -e /etc/init.d/xvfb start
+  - export DISPLAY=:99.0
+
+  - if [ ! -f bin/selenium.jar ]; then curl -L http://selenium-release.storage.googleapis.com/2.50/selenium-server-standalone-2.50.1.jar > bin/selenium.jar; fi
+  - java -jar bin/selenium.jar > selenium.log 2>&1 &
+
+  - cp etc/travis-ci/.coveralls.yml .coveralls.yml
+  - cp etc/travis-ci/app/config/parameters.yml app/config/parameters.yml
+  - cp etc/travis-ci/web/app_test.php web/app_test.php
+  - if [[ $coverage == 'phpspec' ]]; then cp etc/ci/phpspec.yml phpspec.yml; fi;
+  - sed -i 's/test.project_name.loc/localhost:8000/' behat.yml
+
+  - sed -i 's/^/;/' ~/.phpenv/versions/$(phpenv global)/etc/conf.d/xdebug.ini
+  - composer install --prefer-source
+
+  - ant refresh-test-db
+  - php bin/console server:start --env=test
+
+script:
+  - if [[ $coverage == 'phpunit' ]]; then sed -i 's/^;//' ~/.phpenv/versions/$(phpenv global)/etc/conf.d/xdebug.ini; fi;
+  - php -d 'xdebug.max_nesting_level=500' bin/phpunit
+  - if [[ $coverage == 'phpunit' ]]; then sed -i 's/^/;/' ~/.phpenv/versions/$(phpenv global)/etc/conf.d/xdebug.ini; fi;
+  - if [[ $coverage == 'phpspec' ]]; then sed -i 's/^;//' ~/.phpenv/versions/$(phpenv global)/etc/conf.d/xdebug.ini; fi;
+  - ./bin/phpspec run --no-interaction
+  - if [[ $coverage == 'phpspec' ]]; then sed -i 's/^/;/' ~/.phpenv/versions/$(phpenv global)/etc/conf.d/xdebug.ini; fi;
+  - ./bin/behat
+  - ant php-cs-fixer-check-task
+  - ant phpcs-task
+  - ant phpmd-task
+after_script:
+  - if [[ $coverage == 'phpunit' ]]; then php bin/coveralls -v; fi;
+  - if [[ $coverage == 'phpspec' ]]; then php bin/coveralls -v; fi;
+
+
+
