@@ -1,0 +1,20 @@
+---
+- hosts: servers
+  vars_files:
+    - settings.yml
+  roles:
+    - ubuntu-server
+    - memcached
+    - php5
+    #- openjdk7
+    #- oracle_java7
+    - nginx
+    - mysql
+    #- apache
+    #- phpmyadmin
+    - symfony2
+    - selenium
+    #- beanstalkdaemon
+    #- beanstalkclient
+    #- supervisord
+    #- elasticsearch

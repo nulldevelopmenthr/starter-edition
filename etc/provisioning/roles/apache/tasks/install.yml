@@ -1,0 +1,7 @@
+---
+- name: Installs apache web server
+  apt: pkg={{ item }} state=latest update_cache=true
+  sudo: yes
+  with_items:
+    - apache2
+    - libapache2-mod-php5

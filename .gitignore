@@ -31,3 +31,7 @@
 .DS_Store
 #Ignoring ant build xml
 /.ant-targets-build.xml
+
+#Ignoring .vagrant folder
+/.vagrant
+

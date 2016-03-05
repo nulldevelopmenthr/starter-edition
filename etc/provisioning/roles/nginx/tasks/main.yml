@@ -1,0 +1,26 @@
+---
+- name: Installs nginx web server
+  apt: pkg=nginx state=latest update_cache=true
+  sudo: yes
+  notify:
+    - start nginx
+
+- name: Make sure that the www sites directory exists
+  action: file path=/var/www/sites state=directory  mode=0777 owner={{ parameters.deployer_username }}
+  sudo: yes
+
+- name: Push virtual host configurations
+  template: src=sites-available/{{ item.template }}.conf dest=/etc/nginx/sites-available/{{ item.domain }}.conf mode=0640
+  sudo: yes
+  with_items: parameters.applications
+  notify:
+    - RestartNginx
+- name: Add symlink in nginx sites-enabled
+  file: src=/etc/nginx/sites-available/{{ item.domain }}.conf dest=/etc/nginx/sites-enabled/{{ item.domain }}.conf state=link
+  sudo: yes
+  with_items: parameters.applications
+  notify:
+    - RestartNginx
+
+- include: ssl.yml
+  sudo: yes

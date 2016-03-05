@@ -1,0 +1,14 @@
+---
+- name: Install Beanstalk client prerequisites
+  apt: pkg="{{ item }}" state=installed update_cache=true
+  sudo: yes
+  with_items:
+    - python-pip
+    - python-dev
+
+- name: Install PIP Beanstalk packages
+  pip: name="{{ item }}"
+  sudo: yes
+  with_items:
+    - pyyaml
+    - beanstalkc
