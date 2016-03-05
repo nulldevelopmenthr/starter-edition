@@ -1,0 +1,11 @@
+---
+- name: Install Beanstalk daemon
+  apt: pkg="{{ item }}" state=latest update_cache=true
+  sudo: yes
+  with_items:
+    - beanstalkd
+- name: Set up beanstalk listening IP address
+  lineinfile: "dest=/etc/default/beanstalkd regexp='^BEANSTALKD_LISTEN_ADDR=127.0.0.1' line='BEANSTALKD_LISTEN_ADDR={{ private_ip }}'"
+  sudo: yes
+  notify:
+    - RestartBeanstalkd

@@ -1,0 +1,84 @@
+build_environment: Ubuntu 14.04
+language: php
+cache: true
+archive: true
+addons:
+  firefox: "28.0"
+  hosts:
+  - www.test.ci
+
+services:
+  - selenium
+
+php: 
+  - 5.5
+  - 5.6
+
+env:
+  global:
+    - COMPOSER_DISCARD_CHANGES=true
+
+before_script: 
+  - sudo apt-get update
+  - sudo apt-get install php5-fpm
+  - sudo apt-get install nginx
+  - sudo cp ~/.phpenv/versions/$(phpenv version-name)/etc/php-fpm.conf.default ~/.phpenv/versions/$(phpenv version-name)/etc/php-fpm.conf
+  - ~/.phpenv/versions/$(phpenv version-name)/sbin/php-fpm
+  - sudo cp -f etc/shippable-ci/www.test.ci.conf /etc/nginx/sites-available/site-nginx.conf
+  - sudo sed -e "s?%BUILD_DIR%?$(pwd)?g" --in-place /etc/nginx/sites-available/site-nginx.conf
+  - sudo rm -rf /etc/nginx/sites-enabled/site-nginx.conf
+  - sudo ln -s "/etc/nginx/sites-available/site-nginx.conf" "/etc/nginx/sites-enabled/site-nginx.conf"
+  - sudo rm -rf /etc/nginx/sites-enabled/default
+  - sudo rm -rf /etc/nginx/sites-available/default
+  - ls -l /etc/nginx/sites-enabled/
+  - sudo nginx -t
+  - sudo service nginx restart
+
+  - "export DISPLAY=:99.0"
+  - "/etc/init.d/xvfb start"
+
+  - cp etc/shippable-ci/app/config/parameters.yml app/config/parameters.yml
+  - cp etc/shippable-ci/web/app_test.php web/app_test.php
+  - cp etc/ci/behat.yml behat.yml
+
+  - composer self-update
+  - sudo chmod 777 -R var/cache/
+  - sudo chmod 777 -R var/logs/
+  - sudo rm -rf var/cache/*
+  - sudo rm -rf var/logs/*
+  - composer install -n --prefer-source
+
+  - php bin/console doctrine:database:drop --env=dev --force --if-exists
+  - php bin/console doctrine:database:drop --env=test --force --if-exists
+  - php bin/console doctrine:database:create --env=dev
+  - php bin/console doctrine:database:create --env=test
+  - php bin/console doctrine:migrations:migrate --env=test --no-interaction
+  - php bin/console doctrine:fixtures:load --env=test --no-interaction
+  #- php bin/console assetic:dump --env=prod --no-debug
+
+  - chmod +x bin/phpunit  
+  - mkdir -p shippable/testresults
+  - mkdir -p shippable/codecoverage
+  - mkdir -p build/cov
+  - mkdir -p build/logs
+
+script:
+  - ./bin/phpunit --log-junit shippable/testresults/junit.xml --coverage-xml shippable/codecoverage --coverage-php build/cov/coverage.cov src/
+  - sed -i 's/^/;/' ~/.phpenv/versions/$(phpenv global)/etc/conf.d/xdebug.ini
+  - ./bin/behat
+  - ./bin/phpspec run --no-interaction
+  - ./bin/phpmd src/ xml phpmd.xml --reportfile shippable/phpmd.xml
+  - ./bin/phpmd tests/ xml phpmd.xml --reportfile shippable/phpmd.xml
+  - ./bin/phpcs --standard=phpcs.xml src/ -n --report=xml --report-file=shippable/phpcs.xml
+  - ./bin/phpcs --standard=phpcs.xml tests/ -n --report=xml --report-file=shippable/phpcs.xml
+  - ./bin/php-cs-fixer fix spec/ --dry-run --diff --level=symfony --fixers=short_array_syntax,align_double_arrow,align_equals,no_blank_lines_before_namespace,ordered_use,phpdoc_order,-unused_use,-empty_return
+  - ./bin/php-cs-fixer fix src/ --dry-run --diff --level=symfony --fixers=short_array_syntax,align_double_arrow,align_equals,no_blank_lines_before_namespace,ordered_use,phpdoc_order,-unused_use,-empty_return
+  - ./bin/php-cs-fixer fix tests/ --dry-run --diff --level=symfony --fixers=short_array_syntax,align_double_arrow,align_equals,no_blank_lines_before_namespace,ordered_use,phpdoc_order,-unused_use,-empty_return
+
+notifications:
+     email:
+         recipients:
+             - miro+sf2-starter-edition@mirosvrtan.me
+         on_success: change
+         on_failure: change
+

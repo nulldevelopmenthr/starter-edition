@@ -1,0 +1,59 @@
+---
+- name: add symlink for application folder
+  file: src=/vagrant dest={{ parameters.applications[0].path }} state=link
+  sudo: yes
+
+# Remove cache folders
+- file: path="{{ item }}" state=absent
+  sudo: yes
+  with_items:
+    - /dev/shm/appname/cache/
+    - /vagrant/var/cache/
+
+
+- name: Download composer if it's isnt already there
+  shell: curl -sS https://getcomposer.org/installer | php
+  args:
+    chdir: "{{ item.path }}"
+    creates: "{{ item.path }}/composer.phar"
+  with_items: parameters.applications
+
+# Run composer self-update
+- shell: /usr/bin/php composer.phar self-update chdir=/vagrant/
+
+- name: Add github oauth key to avoid API rate limiting
+  shell: php composer.phar config -g github-oauth.github.com {{ parameters.git.rate_limit_token }} chdir=/vagrant/
+  when: parameters.git.rate_limit_token != "ADD-YOUR-OWN"
+
+# Copy app_dev.php file to web folder
+- copy: src=../../../../../etc/dev/web/app_dev.php dest=/vagrant/web/app_dev.php
+- copy: src=../../../../../etc/dev/web/app_test.php dest=/vagrant/web/app_test.php
+- copy: src=../../../../../etc/dev/app/config/parameters.yml dest=/vagrant/app/config/parameters.yml force=no
+
+# Run composer install
+- shell: /usr/bin/php composer.phar install --no-interaction chdir=/vagrant/
+
+# Chmod 777 folders
+- file: path="{{ item }}" mode=0777  state=directory recurse=yes
+  sudo: yes
+  with_items:
+    - /dev/shm/appname/
+    - /vagrant/var/cache/
+    - /vagrant/var/logs/
+
+- name: Add application domains to etc/hosts
+  lineinfile: dest=/etc/hosts line="127.0.0.1 {{ item.domain }}" state=present
+  sudo: yes
+  with_items: parameters.applications
+
+- name: Add create shm to crontab on restart
+  cron: name="setup shm folder" special_time=reboot job="mkdir /dev/shm/appname/ -p && chmod 777 -R /dev/shm/appname/"
+  sudo: yes
+
+- name: Run fixtures
+  shell:  php bin/console {{ item }} chdir=/vagrant/
+  with_items:
+  - doctrine:database:drop --env=test --force
+  - doctrine:database:create --env=test
+  - doctrine:migrations:migrate --env=test --no-interaction
+  - doctrine:fixtures:load --env=test --no-interaction

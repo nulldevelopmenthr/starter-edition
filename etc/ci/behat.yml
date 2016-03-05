@@ -1,0 +1,23 @@
+default:
+    formatters:
+        pretty:
+            verbose:  true
+            paths:    false
+            snippets: false
+
+    suites:
+        web:
+            contexts:
+                - Resources\Behat\WebContext
+    extensions:
+        Behat\MinkExtension:
+            base_url: http://www.test.ci/app_test.php/
+            sessions:
+                default:
+                    symfony2: ~
+                javascript:
+                    selenium2: ~
+            browser_name: firefox
+            show_auto:    false
+            files_path:   /home/ubuntu/project_name/
+        Behat\Symfony2Extension: ~

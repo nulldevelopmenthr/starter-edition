@@ -1,0 +1,11 @@
+---
+- name: Install Memcached
+  apt: pkg="{{ item }}" state=latest update_cache=true
+  sudo: yes
+  with_items:
+    - memcached
+- name: Update listening port
+  lineinfile: "dest=/etc/memcached.conf regexp='^-l' line='-l {{ parameters.memcached.ip }}'"
+  sudo: yes
+  notify:
+    - RestartMemcached

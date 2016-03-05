@@ -1,0 +1,37 @@
+/app/config/parameters.yml
+/build/
+/bin/
+/composer.phar
+/tmp
+/var/*
+!/var/cache
+/var/cache/*
+!var/cache/.gitkeep
+!/var/logs
+/var/logs/*
+!var/logs/.gitkeep
+!/var/sessions
+/var/sessions/*
+!var/sessions/.gitkeep
+!var/SymfonyRequirements.php
+/vendor/
+/web/app_dev.php
+/web/app_test.php
+/web/bundles/
+
+#PHPStorm folder
+/.idea
+#backup files from unix editors
+*~
+#merge files
+*.orig
+#Ignoring shell scripts in root folder
+/*.sh
+#Ignoring MacDS_Store files
+.DS_Store
+#Ignoring ant build xml
+/.ant-targets-build.xml
+
+#Ignoring .vagrant folder
+/.vagrant
+

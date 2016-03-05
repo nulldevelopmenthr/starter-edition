@@ -1,0 +1,28 @@
+formatter.name: progress
+extensions:
+  - Coduo\PhpSpec\DataProvider\DataProviderExtension
+  - Cjm\PhpSpec\Extension\TypeHintedMethodsExtension
+  - RMiller\ExemplifyExtension\ExemplifyExtension
+  - RMiller\BehatSpec\PhpSpecExtension
+  - PhpSpec\Extension\CodeCoverageExtension
+code_coverage:
+  format:
+    - html
+    - clover
+    - php
+  output:
+    html: build/phpspec/coverage
+    clover: build/logs/clover.xml
+    php: build/cov/coverage.cov
+  blacklist:
+    - src/*/Controller
+    - src/*/DataFixtures
+    - src/*/Tests
+    - src/*/*Bundle/Controller
+    - src/*/*Bundle/DataFixtures
+    - src/*/*Bundle/DependencyInjection
+    - src/*/*Bundle/Form
+    - src/*/*Bundle/Tests
+  blacklist_files:
+    - src/*/*Bundle.php
+    - src/*/*Bundle/*Bundle.php

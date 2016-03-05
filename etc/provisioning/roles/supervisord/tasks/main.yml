@@ -1,0 +1,6 @@
+---
+- name: Install supervisor daemon
+  apt: pkg="{{ item }}" state=latest update_cache=true
+  sudo: yes
+  with_items:
+    - supervisor
