@@ -1,4 +1,4 @@
-Devboard application repo
+Symfony starter edition
 ===============
 
 [![Build Status](https://scrutinizer-ci.com/g/nulldevelopmenthr/starter-edition/badges/build.png?b=master)](https://scrutinizer-ci.com/g/nulldevelopmenthr/starter-edition/build-status/master)
