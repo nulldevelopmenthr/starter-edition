@@ -1,0 +1,1 @@
+sed -i 's/^;//' /opt/circleci/php/$(phpenv version-name)/etc/conf.d/xdebug.ini

@@ -1,6 +1,6 @@
 machine:
   php:
-    version: 5.6.5
+    version: 7.0.3
   hosts:
     www.test.ci: 127.0.0.1
   environment:
@@ -11,27 +11,18 @@ general:
     - "tmp/"
 dependencies:
   pre:
-    - sudo apt-get install nginx
-    - yes '' | pecl install -f apcu-4.0.10
-
-    - sudo cp ~/.phpenv/versions/$(phpenv version-name)/etc/php-fpm.conf.default ~/.phpenv/versions/$(phpenv version-name)/etc/php-fpm.conf
-    - echo "cgi.fix_pathinfo = 1" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
-    - ~/.phpenv/versions/$(phpenv version-name)/sbin/php-fpm
-
-    - sudo mkdir /etc/nginx/ssl/
-    - sudo cp etc/provisioning/roles/nginx/files/ssl/server.crt /etc/nginx/ssl/server.crt
-    - sudo cp etc/provisioning/roles/nginx/files/ssl/server.key /etc/nginx/ssl/server.key
-    - sed -i 's/PROJECT_NAME/'"$CIRCLE_PROJECT_REPONAME"'/' etc/ci/symfony2-test-application.conf
-    - sudo cp etc/ci/symfony2-test-application.conf /etc/nginx/sites-enabled/
-    - sudo service nginx restart
-    - cp etc/ci/app/config/parameters.yml app/config/parameters.yml
-    - cp etc/ci/web/app_test.php web/app_test.php
-    - sed -i 's/test.project_name.loc/www.test.ci/' behat.yml
+    - sudo apt-get install ant
+    - ./etc/circleci/setup-circleci-custom-php-703.sh
+    - ./etc/circleci/setup-fpm.sh
+    - ./etc/circleci/setup-nginx.sh
+    - yes '' | sudo /opt/circleci/php/$(phpenv version-name)/bin/pecl install -f apcu-5.1.3
+    - ./etc/circleci/disable-xdebug.sh
+    - ./etc/circleci/setup-app-config.sh
+    - ./etc/circleci/setup-app-permissions.sh
+  override:
+    - composer install --no-interaction
   post:
-    - sudo setfacl -R -m u:www-data:rwx -m u:`whoami`:rwx  var/cache var/logs
-    - sudo setfacl -dR -m u:www-data:rwx -m u:`whoami`:rwx var/cache var/logs
-    - ant refresh-test-db
-    #- php bin/console assetic:dump --env=prod --no-debug
+    - ./etc/circleci/setup-app-data.sh
     - wget http://selenium-release.storage.googleapis.com/2.50/selenium-server-standalone-2.50.1.jar
     - java -jar selenium-server-standalone-2.50.1.jar:
         background: true
