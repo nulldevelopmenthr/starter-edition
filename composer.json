@@ -33,7 +33,7 @@
     "require-dev": {
         "sensio/generator-bundle":                  "^3.0",
         "symfony/phpunit-bridge":                   "^3.0",
-        "phpunit/phpunit":                          "~4",
+        "phpunit/phpunit":                          "~5",
         "mockery/mockery":                          "~0.9",
         "phpspec/phpspec":                          "~2.0",
         "henrikbjorn/phpspec-code-coverage":        "~2.0",
