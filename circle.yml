@@ -36,6 +36,6 @@ test:
     - ./bin/behat --strict
     - ant phpcs-task
     - ant phpmd-task
-    - ant php-cs-fixer-check-task
+    - ant php-cs-fixer-check
     #- ./bin/coveralls
     #- ./bin/test-reporter

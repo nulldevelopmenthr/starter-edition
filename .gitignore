@@ -18,6 +18,7 @@
 /web/app_dev.php
 /web/app_test.php
 /web/bundles/
+/.php_cs.cache
 
 #PHPStorm folder
 /.idea
