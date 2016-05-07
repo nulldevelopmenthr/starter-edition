@@ -14,4 +14,6 @@ Syfmony starter edition is Symfony2 project, built using symfony installer to sp
 
 Based on Symfony framework v3, create at March 5th, 2016;
 
+Important: To run this build successfully on CircleCI, please switch to Ubuntu Trusty 14.04 version (on Projects settings of CircleCI web).
+
 #### Additional packages (ones not installed by symfony standard edition)
