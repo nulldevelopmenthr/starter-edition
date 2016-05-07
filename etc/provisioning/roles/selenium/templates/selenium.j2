@@ -6,7 +6,7 @@ case "${1:-''}" in
         then
             echo "Selenium is already running."
         else
-            export DISPLAY=localhost:99.0 && java -jar {{ parameters.selenium.path }}/{{ parameters.selenium.filename }} -port 4444 -trustAllSSLCertificates -Dwebdriver.chrome.driver=/usr/local/bin/chromedriver > {{ parameters.selenium.log_path }}/output.log 2> {{ parameters.selenium.log_path }}/error.log & echo $! > /tmp/selenium.pid
+            export DISPLAY=:99.0 && java -jar {{ parameters.selenium.path }}/{{ parameters.selenium.filename }} -port 4444 -trustAllSSLCertificates -Dwebdriver.chrome.driver=/usr/local/bin/chromedriver > {{ parameters.selenium.log_path }}/output.log 2> {{ parameters.selenium.log_path }}/error.log & echo $! > /tmp/selenium.pid
             echo "Starting Selenium..."
 
             error=$?
@@ -39,7 +39,7 @@ case "${1:-''}" in
             kill -HUP `cat /tmp/selenium.pid`
             test -f /tmp/selenium.pid && rm -f /tmp/selenium.pid
             sleep 1
-            export DISPLAY=localhost:99.0 && java -jar {{ parameters.selenium.path }}/{{ parameters.selenium.filename }} -port 4444 -trustAllSSLCertificates -Dwebdriver.chrome.driver=/usr/local/bin/chromedriver > {{ parameters.selenium.log_path }}/output.log 2> {{ parameters.selenium.log_path }}/error.log & echo $! > /tmp/selenium.pid
+            export DISPLAY=:99.0 && java -jar {{ parameters.selenium.path }}/{{ parameters.selenium.filename }} -port 4444 -trustAllSSLCertificates -Dwebdriver.chrome.driver=/usr/local/bin/chromedriver > {{ parameters.selenium.log_path }}/output.log 2> {{ parameters.selenium.log_path }}/error.log & echo $! > /tmp/selenium.pid
             echo "Reload Selenium..."
         else
             echo "Selenium isn't running..."
