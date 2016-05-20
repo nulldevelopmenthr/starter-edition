@@ -19,7 +19,7 @@ env:
 
 before_script: 
   - sudo apt-get update
-  - sudo apt-get install php5-fpm
+  #- sudo apt-get install php5-fpm
   - sudo apt-get install nginx
   - sudo cp ~/.phpenv/versions/$(phpenv version-name)/etc/php-fpm.conf.default ~/.phpenv/versions/$(phpenv version-name)/etc/php-fpm.conf
   - ~/.phpenv/versions/$(phpenv version-name)/sbin/php-fpm
