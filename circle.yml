@@ -11,8 +11,6 @@ general:
     - "tmp/"
 dependencies:
   pre:
-    - sudo apt-get install ant
-    - ./etc/circleci/setup-circleci-custom-php-703.sh
     - ./etc/circleci/setup-fpm.sh
     - ./etc/circleci/setup-nginx.sh
     - yes '' | sudo /opt/circleci/php/$(phpenv version-name)/bin/pecl install -f apcu-5.1.3
