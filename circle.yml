@@ -11,6 +11,7 @@ general:
     - "tmp/"
 dependencies:
   pre:
+    - sudo apt-get update
     - ./etc/circleci/setup-fpm.sh
     - ./etc/circleci/setup-nginx.sh
     - yes '' | sudo /opt/circleci/php/$(phpenv version-name)/bin/pecl install -f apcu-5.1.3

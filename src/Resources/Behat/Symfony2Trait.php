@@ -1,5 +1,4 @@
 <?php
-
 namespace Resources\Behat;
 
 use Symfony\Component\HttpKernel\KernelInterface;
