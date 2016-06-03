@@ -1,5 +1,4 @@
 <?php
-
 namespace Application\Migrations;
 
 use Doctrine\DBAL\Migrations\AbstractMigration;
