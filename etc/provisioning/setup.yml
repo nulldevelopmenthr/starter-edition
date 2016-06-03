@@ -19,3 +19,4 @@
     #- beanstalkclient
     #- supervisord
     #- elasticsearch
+    #- redis
