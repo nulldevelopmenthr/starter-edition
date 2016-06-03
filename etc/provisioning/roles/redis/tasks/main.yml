@@ -1,0 +1,7 @@
+---
+
+- name: Install redis
+  action: apt name="{{ item }}" state=latest update_cache=true
+  with_items:
+    - redis-server
+  sudo: yes

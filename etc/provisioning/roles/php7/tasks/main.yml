@@ -28,6 +28,7 @@
     - php7.0-mbstring
     - php7.0-xml
     - php-zip
+    - php-redis
 - name: Activates php mods
   command: phpenmod mcrypt
   sudo: yes

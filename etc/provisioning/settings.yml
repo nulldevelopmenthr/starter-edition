@@ -32,6 +32,6 @@ parameters:
   selenium:
     path:       /usr/lib/selenium
     log_path:   /var/log/selenium
-    url:        http://selenium-release.storage.googleapis.com/2.50/selenium-server-standalone-2.50.1.jar
-    filename:   selenium-server-standalone-2.50.1.jar
+    url:        http://selenium-release.storage.googleapis.com/2.53/selenium-server-standalone-2.53.0.jar
+    filename:   selenium-server-standalone-2.53.0.jar
   timezone: 'UTC'
