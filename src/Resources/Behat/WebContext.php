@@ -78,7 +78,7 @@ class WebContext extends MinkContext implements KernelAwareContext, SnippetAccep
         if (null === $result) {
             $msg = "Text '$text' was not found on page headline";
             throw new \Exception($msg);
-        };
+        }
     }
 
     /**
