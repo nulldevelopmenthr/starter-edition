@@ -1,10 +1,7 @@
 formatter.name: progress
 extensions:
-  - Coduo\PhpSpec\DataProvider\DataProviderExtension
-  - Cjm\PhpSpec\Extension\TypeHintedMethodsExtension
-  - RMiller\ExemplifyExtension\ExemplifyExtension
-  - RMiller\BehatSpec\PhpSpecExtension
-  - PhpSpec\Extension\CodeCoverageExtension
+  Cjm\PhpSpec\Extension\TypeHintedMethodsExtension: ~
+  PhpSpecCodeCoverage\CodeCoverageExtension: ~
 code_coverage:
   format:
     - html
