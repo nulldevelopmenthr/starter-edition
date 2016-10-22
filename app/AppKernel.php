@@ -37,8 +37,8 @@ class AppKernel extends Kernel
 
     public function getCacheDir()
     {
-        if ($this->getRootDir() === '/vagrant/app' && in_array($this->environment, ['dev', 'test'])) {
-            return '/dev/shm/appname/cache/'.$this->environment;
+        if (in_array($this->environment, ['dev', 'test'])) {
+            return '/dev/shm/project_name/cache/'.$this->environment;
         }
 
         return dirname(__DIR__).'/var/cache/'.$this->getEnvironment();
@@ -46,8 +46,8 @@ class AppKernel extends Kernel
 
     public function getLogDir()
     {
-        if ($this->getRootDir() === '/vagrant/app' && in_array($this->environment, ['dev', 'test'])) {
-            return '/dev/shm/appname/logs';
+        if (in_array($this->environment, ['dev', 'test'])) {
+            return '/dev/shm/project_name/logs';
         }
 
         return dirname(__DIR__).'/var/logs';
