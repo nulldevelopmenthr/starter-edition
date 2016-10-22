@@ -11,12 +11,13 @@ default:
                 - Resources\Behat\WebContext
     extensions:
         Behat\MinkExtension:
-            base_url: http://test.project_name.loc/
+            base_url: http://www.project_name.loc/app_test.php/
             sessions:
                 default:
                     symfony2: ~
                 javascript:
-                    selenium2: ~
+                    selenium2:
+                        wd_host: selenium:4444/wd/hub
             browser_name: firefox
             show_auto:    false
             files_path: /vagrant/
