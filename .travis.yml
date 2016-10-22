@@ -94,7 +94,8 @@ matrix:
         - if [ ! -f bin/selenium-2.53.0.jar ]; then curl -L http://selenium-release.storage.googleapis.com/2.53/selenium-server-standalone-2.53.0.jar > bin/selenium-2.53.0.jar; fi
         - java -jar bin/selenium-2.53.0.jar > selenium.log 2>&1 &
         
-        - sed -i 's/test.project_name.loc/localhost:8000/' behat.yml
+        - sed -i 's/www.project_name.loc/localhost:8000/' behat.yml
+        - sed -i 's/selenium:4444/localhost:4444/' behat.yml
 
         - cp etc/travis-ci/app/config/parameters.yml app/config/parameters.yml
         - cp etc/travis-ci/web/app_test.php web/app_test.php
