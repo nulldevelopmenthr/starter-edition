@@ -1,6 +1,6 @@
 machine:
   php:
-    version: 7.0.3
+    version: 7.0.7
   hosts:
     www.test.ci: 127.0.0.1
   environment:
@@ -22,8 +22,8 @@ dependencies:
     - composer install --no-interaction
   post:
     - ./etc/circleci/setup-app-data.sh
-    - wget http://selenium-release.storage.googleapis.com/2.53/selenium-server-standalone-2.53.0.jar
-    - java -jar selenium-server-standalone-2.53.0.jar:
+    - wget http://selenium-release.storage.googleapis.com/2.53/selenium-server-standalone-2.53.1.jar
+    - java -jar selenium-server-standalone-2.53.1.jar:
         background: true
   cache_directories:
     - "vendor"
