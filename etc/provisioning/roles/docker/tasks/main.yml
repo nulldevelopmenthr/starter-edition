@@ -1,0 +1,34 @@
+---
+- name: add docker apt key
+  action: apt_key keyserver=hkp://pgp.mit.edu:80 id=58118E89F3A912897C070ADBF76221572C52609D state=present 
+  tags: docker
+
+- name: add docker repository
+  action: apt_repository repo="deb https://apt.dockerproject.org/repo ubuntu-xenial main" state=present update_cache=yes 
+  when: "ansible_distribution_version in ['16.04']"  
+  tags: docker
+
+- name: install docker
+  action: apt pkg="{{item}}" state=present update_cache=yes
+  with_items:
+      - "{{docker_package_name}}"
+  tags: docker
+
+- name: install docker
+  service: name=docker state=started
+  tags: docker
+
+- name: install prereqs for docker-compose
+  action: apt pkg="{{item}}" state=present update_cache=no
+  with_items:
+      - "curl"
+  tags: docker-compose
+
+- name: install docker-compose
+  shell: curl -L https://github.com/docker/compose/releases/download/{{ docker_compose_version }}/docker-compose-`uname -s`-`uname -m` > /usr/local/bin/docker-compose
+
+- name: make it executable
+  file: path=/usr/local/bin/docker-compose state=file mode=0755 
+
+- name: allow user to access it
+  shell: usermod -aG docker {{ parameters.luser }}

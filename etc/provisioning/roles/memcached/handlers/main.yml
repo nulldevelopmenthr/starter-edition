@@ -1,4 +1,0 @@
----
-- name: RestartMemcached
-  service: name=memcached state=restarted
-  sudo: yes

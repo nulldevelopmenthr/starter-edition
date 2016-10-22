@@ -1,4 +1,0 @@
----
-- name: RestartPhp7fpm
-  service: name=php7-fpm state=restarted
-  sudo: yes

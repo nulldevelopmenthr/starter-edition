@@ -1,4 +1,0 @@
----
-- name: RestartBeanstalkd
-  service: name=beanstalkd state=restarted
-  sudo: yes
