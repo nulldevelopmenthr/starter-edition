@@ -1,0 +1,85 @@
+version: '2'
+
+services:
+
+  code:
+    image: msvrtan/code:dev0.0.6
+    container_name: code
+    volumes:
+      - ./:/var/www
+
+  nginx-dev:
+    build:
+      context: ./docker/nginx-sf3-dev
+    container_name: nginx-dev
+    volumes_from:
+      - code
+    volumes:
+      - ./var/logs/nginx/:/var/log/nginx
+    ports:
+      - "80:80"
+    links:
+      - php7fpm
+
+  php7fpm:
+    container_name: php7fpm
+    image: msvrtan/php7fpm-dev:dev0.0.9
+    shm_size: 256MB
+    volumes_from:
+      - code
+    volumes:
+      - ./var/logs/php-fpm/:/var/log/php-fpm
+      - ./run/shm/project_name/:/memdisk
+    expose:
+      - "9000"
+    links:
+      - mysql_dev
+      - mysql_test
+
+  mysql_dev:
+    image: "mysql:5.6"
+    container_name: mysql_dev
+    ports:
+      - 13306:3306
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: project_name_dev
+      MYSQL_USER: project_name
+      MYSQL_PASSWORD: pass123
+
+  mysql_test:
+    image: "mysql:5.6"
+    container_name: mysql_test
+    ports:
+      - 13307:3306
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: project_name_test
+      MYSQL_USER: project_name
+      MYSQL_PASSWORD: pass123
+
+
+  workspace:
+    container_name: workspace
+    image: msvrtan/workspace-dev:dev0.0.9
+    shm_size: 256MB
+    volumes_from:
+      - code
+    links:
+      - mysql_dev
+      - mysql_test
+      - selenium
+      
+  selenium:
+    image: selenium/standalone-firefox:2.53.0
+    container_name: selenium
+    expose:
+      - "4444"
+    extra_hosts:
+      - "www.test.ci:172.17.0.1"
+      - "www.project_name.loc:172.17.0.1"
+    environment:
+       SCREEN_WIDTH: 1920
+       SCREEN_HEIGHT: 1200
+    links:
+      - nginx-dev
