@@ -34,7 +34,8 @@
     "require-dev": {
         "sensio/generator-bundle":                  "^3.0",
         "symfony/phpunit-bridge":                   "^3.0",
-        "msvrtan/thesting":                         "~0.2"
+        "msvrtan/thesting":                         "~0.2",
+        "phing/phing": "^2.15"
     },
     "scripts": {
         "symfony-scripts": [

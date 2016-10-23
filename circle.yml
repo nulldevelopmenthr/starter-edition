@@ -14,7 +14,7 @@ dependencies:
     - sudo apt-get update
     - ./etc/circleci/setup-fpm.sh && ./etc/circleci/setup-nginx.sh
     - ./etc/circleci/disable-xdebug.sh
-    - ./etc/circleci/setup-app-config.sh & ./etc/circleci/setup-app-permissions.sh
+    - ./etc/circleci/setup-app-config.sh && ./etc/circleci/setup-app-permissions.sh
   override:
     - composer install --no-interaction
   post:
@@ -30,8 +30,6 @@ test:
     - ./bin/phpunit
     - ./bin/phpspec run --no-interaction
     - ./bin/behat --strict
-    - ant phpcs-task -emacs
-    - ant phpmd-task -emacs
-    - ant php-cs-fixer-check -emacs
+    - ./bin/phing check-codestandards
     #- ./bin/coveralls
     #- ./bin/test-reporter

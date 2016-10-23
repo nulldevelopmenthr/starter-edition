@@ -1,0 +1,27 @@
+---
+- name: Create .bash_aliases file if it doesnt exist
+  file: path=/home/{{ parameters.luser }}/.bash_aliases state=touch owner={{ parameters.luser }}
+
+- lineinfile: dest=/home/{{ parameters.luser }}/.bash_aliases line="alias composer='docker-compose run workspace php composer.phar'"
+- lineinfile: dest=/home/{{ parameters.luser }}/.bash_aliases line="alias phing='docker-compose run workspace ./bin/phing'"
+
+- lineinfile: dest=/home/{{ parameters.luser }}/.bash_aliases line="alias console='docker-compose run workspace php bin/console'"
+- lineinfile: dest=/home/{{ parameters.luser }}/.bash_aliases line="alias refresh-dev-db='docker-compose run workspace ./bin/phing refresh-dev-db'"
+- lineinfile: dest=/home/{{ parameters.luser }}/.bash_aliases line="alias refresh-test-db='docker-compose run workspace ./bin/phing refresh-test-db'"
+
+- lineinfile: dest=/home/{{ parameters.luser }}/.bash_aliases line="alias phpunit='docker-compose run workspace ./bin/phpunit'"
+- lineinfile: dest=/home/{{ parameters.luser }}/.bash_aliases line="alias phpspec='docker-compose run workspace ./bin/phpspec'"
+- lineinfile: dest=/home/{{ parameters.luser }}/.bash_aliases line="alias behat='docker-compose run workspace ./bin/behat'"
+- lineinfile: dest=/home/{{ parameters.luser }}/.bash_aliases line="alias php-cs-fixer='docker-compose run workspace ./bin/php-cs-fixer'"
+- lineinfile: dest=/home/{{ parameters.luser }}/.bash_aliases line="alias fix-codestandards='docker-compose run workspace ./bin/phing fix-codestandards'"
+
+- lineinfile: dest=/home/{{ parameters.luser }}/.bash_aliases line="alias test='phpunit && phpspec run && behat && fix-codestandards'"
+
+- lineinfile: dest=/home/{{ parameters.luser }}/.bash_aliases line="alias migrations-diff='docker-compose run workspace php bin/console doctrine:migrations:diff'"
+- lineinfile: dest=/home/{{ parameters.luser }}/.bash_aliases line="alias migrate='docker-compose run workspace php bin/console doctrine:migrations:migrate'"
+
+- lineinfile: dest=/home/{{ parameters.luser }}/.bash_aliases line="alias drm='docker rm $(docker ps -a -q) -f'"
+- lineinfile: dest=/home/{{ parameters.luser }}/.bash_aliases line="alias drmi='docker rmi $(docker images -q) -f'"
+
+- lineinfile: dest=/home/{{ parameters.luser }}/.bash_aliases line="alias ggc='git gc --aggressive --prune=now'"
+- lineinfile: dest=/home/{{ parameters.luser }}/.bashrc line="cd /vagrant"

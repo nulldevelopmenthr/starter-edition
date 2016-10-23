@@ -1,241 +1,69 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0"?>
 
-<project name="devboard_core" default="build">
-<property
-    name="my.project.tmp.exec.output"
-    value="${tmp.dir}/exec-output.txt"/>
+<project default="default" name="Sf3 starter edition">
 
-    <target name="test"
-            depends="phpspec,phpunit,behat">
+    <target name="default" description="Help target">
+        <exec command="phing -l" passthru="true"/>
     </target>
 
-    <target name="fix-codestandards"
-            depends="php-cs-fixer-fix,check-codestandards">
-    </target>
-    <target name="check-codestandards"
-            depends="php-cs-fixer-check,phpmd-task,phpcs-task">
-    </target>
-    <target name="refresh-test-db"
-            depends="drop-test-db,create-test-db,migrate-test-db,fixtures-test-db">
-    </target>
-    <target name="refresh-dev-db"
-            depends="drop-dev-db,create-dev-db,migrate-dev-db,fixtures-dev-db">
+    <target name="fix-codestandards" depends="php-cs-fixer-fix,phpmd,phpcs"/>
+    <target name="check-codestandards" depends="php-cs-fixer-check,phpmd,phpcs"/>
+
+    <target name="php-cs-fixer-fix" description="Run php-cs-fixer fix">
+        <exec command="bin/php-cs-fixer fix" passthru="true" checkreturn="true"/>
     </target>
 
-    <target name="phpspec" description="">
-        <exec executable="bin/phpspec" failonerror="false" resultproperty="phpspecresult" outputproperty="phpspecoutput">
-            <arg value="run" />
-            <arg value="-v" />
-        </exec>
-         <fail message="${phpspecoutput}">
-	        <condition>
-	            <isfailure code="${phpspecresult}"/>
-	        </condition>
-  	  	</fail>
+    <target name="php-cs-fixer-check" description="Run php-cs-fixer check">
+        <exec command="bin/php-cs-fixer fix --dry-run --diff" passthru="true" checkreturn="true"/>
     </target>
 
-    <target name="phpspec-code-coverage" description="">
-        <exec executable="bin/phpspec" failonerror="false" resultproperty="phpspecresult" outputproperty="phpspecoutput">
-            <arg value="run" />
-            <arg value="-v" />
-            <arg value="-c"/>
-            <arg value="etc/ci/phpspec.yml"/>
-        </exec>
-        <fail message="${phpspecoutput}">
-            <condition>
-                <isfailure code="${phpspecresult}"/>
-            </condition>
-        </fail>
-    </target>
-
-    <target name="phpunit" description="">
-        <exec executable="bin/phpunit"  failonerror="false" resultproperty="phpunitresult" outputproperty="phpunitoutput"/>
-        <fail message="${phpunitoutput}">
-            <condition>
-                <isfailure code="${phpunitresult}"/>
-            </condition>
-        </fail>
-    </target>
-
-    <target name="behat-task" description="Run behat tasks in parallel">
-
-        <antcall target="behat-suite-strict">
-            <param name="suite" value="company"/>
-        </antcall>
-        <antcall target="behat-suite-strict">
-            <param name="suite" value="company_admin"/>
-        </antcall>
-        <parallel threadCount="2">
-            <antcall target="behat-suite-strict">
-                <param name="suite" value="user"/>
-            </antcall>
-            <antcall target="behat-suite">
-                <param name="suite" value="wip"/>
-            </antcall>
+    <target name="phpmd" description="Run phpmd">
+        <parallel threadCount="4">
+            <phingcall target="phpmd-task">
+                <property name="path" value="app"/>
+            </phingcall>
+            <phingcall target="phpmd-task">
+                <property name="path" value="src"/>
+            </phingcall>
+            <phingcall target="phpmd-task">
+                <property name="path" value="tests"/>
+            </phingcall>
         </parallel>
     </target>
 
-
-    <target name="behat-suite" description="">
-        <exec executable="bin/behat"  failonerror="true">
-            <arg value="-s" />
-            <arg value="${suite}" />
-            <arg value="-f" />
-            <arg value="progress" />
-            <arg value="--colors"/>
-        </exec>
-    </target>
-
-    <target name="behat-suite-strict" description="">
-        <exec executable="bin/behat"  failonerror="true">
-            <arg value="-s" />
-            <arg value="${suite}" />
-            <arg value="-f" />
-            <arg value="progress" />
-            <arg value="--colors"/>
-            <arg value="--strict" />
-        </exec>
-    </target>
-
-    <target name="behat" description="">
-        <exec executable="bin/behat"  failonerror="true">
-            <arg value="-f" />
-            <arg value="progress" />
-            <arg value="--colors"/>
-            <arg value="--strict" />
-            <arg value="--rerun" />
-        </exec>
-    </target>
-    <target name="phpmd-task" description="Run phpmd in parallel">
-        <parallel threadCount="2">
-            <antcall target="phpmd">
-            	<param name="path" value="src"/>
-            </antcall>
-            <antcall target="phpmd">
-                <param name="path" value="app"/>
-            </antcall>
-            <antcall target="phpmd">
-                <param name="path" value="tests"/>
-            </antcall>
-        </parallel>
-    </target>
-    <target name="phpcs-task" description="Run phpcs in parallel">
-        <parallel threadCount="2">
-            <antcall target="phpcs">
-            	<param name="path" value="src"/>
-            </antcall>
-            <antcall target="phpcs">
-                <param name="path" value="app"/>
-            </antcall>
-            <antcall target="phpcs">
-                <param name="path" value="tests"/>
-            </antcall>
+    <target name="phpcs" description="Run phpcs">
+        <parallel threadCount="4">
+            <phingcall target="phpcs-task">
+                <property name="path" value="app"/>
+            </phingcall>
+            <phingcall target="phpcs-task">
+                <property name="path" value="src"/>
+            </phingcall>
+            <phingcall target="phpcs-task">
+                <property name="path" value="tests"/>
+            </phingcall>
         </parallel>
     </target>
 
-    <target name="php-cs-fixer-fix" description="">
-        <exec executable="bin/php-cs-fixer">
-            <arg value="fix" />
-        </exec>
+    <target name="phpmd-task" description="Refresh dev DB">
+        <exec command="bin/phpmd ${path} text phpmd.xml" passthru="true" checkreturn="true"/>
     </target>
-    <target name="php-cs-fixer-check" description="">
-        <exec executable="bin/php-cs-fixer">
-            <arg value="fix" />
-            <arg value="--dry-run" />
-            <arg value="--diff" />
-        </exec>
-    </target>
-    <target name="phpmd" description="">
-        <exec executable="bin/phpmd">
-            <arg path="${basedir}/${path}" />
-            <arg value="text" />
-            <arg value="phpmd.xml" />
-        </exec>
-    </target>
-    <target name="phpcs" description="">
-        <exec executable="bin/phpcs">
-            <arg value="--standard=phpcs.xml" />
-            <arg path="${basedir}/${path}" />
-            <arg value="-n" />
-        </exec>
+    <target name="phpcs-task" description="Refresh dev DB">
+        <exec command="bin/phpcs --standard=phpcs.xml ${path} -n" passthru="true" checkreturn="true"/>
     </target>
 
-    <target name="drop-test-db" description="">
-        <exec executable="php">
-            <arg value="${basedir}/bin/console" />
-            <arg value="doctrine:database:drop" />
-            <arg value="--env=test" />
-            <arg value="--force" />
-            <arg value="--if-exists" />
-        </exec>
-    </target>
-    <target name="drop-dev-db" description="">
-        <exec executable="php">
-            <arg value="${basedir}/bin/console" />
-            <arg value="doctrine:database:drop" />
-            <arg value="--env=dev" />
-            <arg value="--force" />
-            <arg value="--if-exists" />
-        </exec>
+    <target name="refresh-dev-db" description="Refresh dev DB">
+        <exec command="bin/console doctrine:database:drop --force --if-exists --env=dev" passthru="true" checkreturn="true"/>
+        <exec command="bin/console doctrine:database:create --env=dev" passthru="true" checkreturn="true"/>
+        <exec command="bin/console doctrine:migrations:migrate --no-interaction --env=dev" passthru="true"/>
+        <exec command="bin/console doctrine:fixtures:load --verbose --append --env=dev" passthru="true"/>
     </target>
 
-    <target name="create-test-db" description="">
-        <exec executable="php">
-            <arg value="${basedir}/bin/console" />
-            <arg value="doctrine:database:create" />
-            <arg value="--env=test" />
-        </exec>
-    </target>
-    <target name="create-dev-db" description="">
-        <exec executable="php">
-            <arg value="${basedir}/bin/console" />
-            <arg value="doctrine:database:create" />
-            <arg value="--env=dev" />
-        </exec>
+    <target name="refresh-test-db" description="Refresh dev DB">
+        <exec command="bin/console doctrine:database:drop --force --if-exists --env=test" passthru="true" checkreturn="true"/>
+        <exec command="bin/console doctrine:database:create --env=test" passthru="true" checkreturn="true"/>
+        <exec command="bin/console doctrine:migrations:migrate --no-interaction --env=test" passthru="true"/>
+        <exec command="bin/console doctrine:fixtures:load --verbose --append --env=test" passthru="true"/>
     </target>
 
-    <target name="migrate-test-db" description="">
-        <exec executable="php">
-            <arg value="${basedir}/bin/console" />
-            <arg value="doctrine:migrations:migrate" />
-            <arg value="--env=test" />
-        </exec>
-    </target>
-    <target name="migrate-dev-db" description="">
-        <exec executable="php">
-            <arg value="${basedir}/bin/console" />
-            <arg value="doctrine:migrations:migrate" />
-            <arg value="--env=dev" />
-        </exec>
-    </target>
-
-    <target name="fixtures-test-db" description="">
-        <exec executable="php">
-            <arg value="${basedir}/bin/console" />
-            <arg value="doctrine:fixtures:load" />
-            <arg value="--env=test" />
-        </exec>
-    </target>
-    <target name="fixtures-dev-db" description="">
-        <exec executable="php">
-            <arg value="${basedir}/bin/console" />
-            <arg value="doctrine:fixtures:load" />
-            <arg value="--env=dev" />
-        </exec>
-    </target>
-
-    <target name="apt-install-xdebug" description="">
-        <exec executable="apt-get">
-            <arg value="install" />
-            <arg value="php5-xdebug" />
-            <arg value="-y" />
-        </exec>
-    </target>
-    <target name="apt-remove-xdebug" description="">
-        <exec executable="apt-get">
-            <arg value="remove" />
-            <arg value="php5-xdebug" />
-            <arg value="-y" />
-        </exec>
-    </target>
 </project>

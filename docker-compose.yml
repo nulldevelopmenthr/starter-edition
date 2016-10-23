@@ -23,7 +23,7 @@ services:
 
   php7fpm:
     container_name: php7fpm
-    image: msvrtan/php7fpm-dev:dev0.0.9
+    image: msvrtan/php7fpm-dev:dev0.1.0
     shm_size: 256MB
     volumes_from:
       - code
@@ -39,8 +39,8 @@ services:
   mysql_dev:
     image: "mysql:5.6"
     container_name: mysql_dev
-    ports:
-      - 13306:3306
+    expose:
+      - "3306"
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: project_name_dev
@@ -50,8 +50,8 @@ services:
   mysql_test:
     image: "mysql:5.6"
     container_name: mysql_test
-    ports:
-      - 13307:3306
+    expose:
+      - "3306"
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: project_name_test
@@ -61,7 +61,7 @@ services:
 
   workspace:
     container_name: workspace
-    image: msvrtan/workspace-dev:dev0.0.9
+    image: msvrtan/workspace-dev:dev0.1.1
     shm_size: 256MB
     volumes_from:
       - code
