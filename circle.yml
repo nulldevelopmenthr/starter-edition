@@ -12,12 +12,9 @@ general:
 dependencies:
   pre:
     - sudo apt-get update
-    - ./etc/circleci/setup-fpm.sh
-    - ./etc/circleci/setup-nginx.sh
-    - yes '' | sudo /opt/circleci/php/$(phpenv version-name)/bin/pecl install -f apcu-5.1.3
+    - ./etc/circleci/setup-fpm.sh && ./etc/circleci/setup-nginx.sh
     - ./etc/circleci/disable-xdebug.sh
-    - ./etc/circleci/setup-app-config.sh
-    - ./etc/circleci/setup-app-permissions.sh
+    - ./etc/circleci/setup-app-config.sh & ./etc/circleci/setup-app-permissions.sh
   override:
     - composer install --no-interaction
   post:
