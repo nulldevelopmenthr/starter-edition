@@ -58,6 +58,7 @@ matrix:
       before_install:
         - cp etc/travis-ci/.coveralls.yml .coveralls.yml
         - cp etc/travis-ci/app/config/parameters.yml app/config/parameters.yml
+        - sed -i 's/mysql_test/127.0.0.1/' app/config/config_test.yml
       install:
         - composer install --prefer-source
       before_script:
@@ -94,6 +95,7 @@ matrix:
         
         - sed -i 's/www.project_name.loc/localhost:8000/' behat.yml
         - sed -i 's/selenium:4444/localhost:4444/' behat.yml
+        - sed -i 's/mysql_test/127.0.0.1/' app/config/config_test.yml
 
         - cp etc/travis-ci/app/config/parameters.yml app/config/parameters.yml
         - cp etc/travis-ci/web/app_test.php web/app_test.php
