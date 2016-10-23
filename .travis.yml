@@ -20,9 +20,7 @@ matrix:
       install:
         - composer install --prefer-source
       script:
-        - ant php-cs-fixer-check -emacs
-        - ant phpcs-task -emacs
-        - ant phpmd-task -emacs
+        - ./bin/phing check-codestandards
 
     #####################################################################
     # Job 2: PHPSpec 
@@ -63,7 +61,7 @@ matrix:
       install:
         - composer install --prefer-source
       before_script:
-        - ant refresh-test-db -emacs
+        - ./bin/phing refresh-test-db
       script:
         - php -d 'xdebug.max_nesting_level=500' bin/phpunit
       after_script:
@@ -103,7 +101,7 @@ matrix:
       install:
         - composer install --prefer-source
       before_script:
-        - ant refresh-test-db -emacs
+        - ./bin/phing refresh-test-db
         - php bin/console server:start --env=test
       script:
         - ./bin/behat
