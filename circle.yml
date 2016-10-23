@@ -1,6 +1,10 @@
 machine:
+  pre:
+    - curl -sSL https://s3.amazonaws.com/circle-downloads/install-circleci-docker.sh | bash -s -- 1.10.0
   php:
     version: 7.0.7
+  services:
+    - docker
   hosts:
     www.test.ci: 127.0.0.1
   environment:
@@ -11,25 +15,23 @@ general:
     - "tmp/"
 dependencies:
   pre:
-    - sudo apt-get update
-    - ./etc/circleci/setup-fpm.sh && ./etc/circleci/setup-nginx.sh
-    - ./etc/circleci/disable-xdebug.sh
-    - ./etc/circleci/setup-app-config.sh & ./etc/circleci/setup-app-permissions.sh
+    - sudo pip install docker-compose
+    - docker-compose pull
+    - docker-compose up -d
+    - ./etc/circleci/setup-app-config.sh
+    - ./etc/circleci/setup-app-permissions.sh
   override:
-    - composer install --no-interaction
+    - docker-compose run workspace php /usr/local/bin/composer.phar install
   post:
     - ./etc/circleci/setup-app-data.sh
-    - wget http://selenium-release.storage.googleapis.com/2.53/selenium-server-standalone-2.53.1.jar
-    - java -jar selenium-server-standalone-2.53.1.jar:
-        background: true
   cache_directories:
     - "vendor"
     - "bin"
 test:
   override:
-    - ./bin/phpunit
-    - ./bin/phpspec run --no-interaction
-    - ./bin/behat --strict
+    - docker-compose run workspace php ./bin/phpunit
+    - docker-compose run workspace php ./bin/phpspec run --no-interaction
+    - docker-compose run workspace php ./bin/behat --strict
     - ant phpcs-task -emacs
     - ant phpmd-task -emacs
     - ant php-cs-fixer-check -emacs
