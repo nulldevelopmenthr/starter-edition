@@ -2,6 +2,7 @@ imports:
     - { resource: config_dev.yml }
 
 parameters:
+    database_host: mysql_test
     database_name: project_name_test
 
 framework:
