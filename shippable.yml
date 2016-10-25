@@ -11,8 +11,7 @@ services:
   - selenium
 
 php: 
-  - 5.5
-  - 5.6
+  - 7
 
 env:
   global:
@@ -20,7 +19,7 @@ env:
 
 before_script: 
   - sudo apt-get update
-  - sudo apt-get install php5-fpm
+  #- sudo apt-get install php5-fpm
   - sudo apt-get install nginx
   - sudo cp ~/.phpenv/versions/$(phpenv version-name)/etc/php-fpm.conf.default ~/.phpenv/versions/$(phpenv version-name)/etc/php-fpm.conf
   - ~/.phpenv/versions/$(phpenv version-name)/sbin/php-fpm
@@ -67,14 +66,9 @@ script:
   - sed -i 's/^/;/' ~/.phpenv/versions/$(phpenv global)/etc/conf.d/xdebug.ini
   - ./bin/behat
   - ./bin/phpspec run --no-interaction
-  - ./bin/phpmd src/ xml phpmd.xml --reportfile shippable/phpmd.xml
-  - ./bin/phpmd tests/ xml phpmd.xml --reportfile shippable/phpmd.xml
-  - ./bin/phpcs --standard=phpcs.xml src/ -n --report=xml --report-file=shippable/phpcs.xml
-  - ./bin/phpcs --standard=phpcs.xml tests/ -n --report=xml --report-file=shippable/phpcs.xml
-  - ./bin/php-cs-fixer fix spec/ --dry-run --diff --level=symfony --fixers=short_array_syntax,align_double_arrow,align_equals,no_blank_lines_before_namespace,ordered_use,phpdoc_order,-unused_use,-empty_return
-  - ./bin/php-cs-fixer fix src/ --dry-run --diff --level=symfony --fixers=short_array_syntax,align_double_arrow,align_equals,no_blank_lines_before_namespace,ordered_use,phpdoc_order,-unused_use,-empty_return
-  - ./bin/php-cs-fixer fix tests/ --dry-run --diff --level=symfony --fixers=short_array_syntax,align_double_arrow,align_equals,no_blank_lines_before_namespace,ordered_use,phpdoc_order,-unused_use,-empty_return
-
+  - ant phpcs-task
+  - ant phpmd-task
+  - ant php-cs-fixer-check
 notifications:
      email:
          recipients:
