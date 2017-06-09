@@ -1,40 +1,3 @@
-build:
-  environment:
-    php:
-      version: '5.5.14'
-      ini:
-         'date.timezone': 'UTC'
-    hosts:
-      www.test.ci: '127.0.0.1'
-    java: 'java-7-oracle'
-    apache2:
-      modules: ['rewrite']
-      sites:
-        symfony_app:
-          web_root: 'web/'
-          host: 'www.test.ci'
-  cache:
-    directories:
-      - vendor
-      - bin
-  dependencies:
-    before:
-      - 'cp etc/scrutinizer-ci/app/config/parameters.yml app/config/parameters.yml'
-      - 'cp etc/scrutinizer-ci/web/app_test.php web/app_test.php'
-      - 'cp etc/scrutinizer-ci/web/.htaccess web/.htaccess'
-      - 'cp etc/ci/behat.yml behat.yml'
-    after:
-      - php bin/console doctrine:database:create --env=dev
-      - php bin/console doctrine:database:create --env=test
-      - 'php bin/console doctrine:migrations:migrate --env=test --no-interaction'
-      - 'php bin/console doctrine:fixtures:load --env=test --no-interaction'
-      #- 'php bin/console assetic:dump --env=prod --no-debug'
-  project_setup:
-    before:
-      - wget http://selenium-release.storage.googleapis.com/2.50/selenium-server-standalone-2.50.1.jar
-      -
-        command: java -jar selenium-server-standalone-2.50.1.jar
-        background: true
 checks:
     php:
         code_rating: true
@@ -57,3 +20,4 @@ tools:
   php_analyzer: true
   sensiolabs_security_checker: true
   php_code_coverage: true
+
