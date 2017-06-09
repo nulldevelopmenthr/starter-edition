@@ -23,6 +23,9 @@
                 <property name="path" value="app"/>
             </phingcall>
             <phingcall target="phpmd-task">
+                <property name="path" value="lib"/>
+            </phingcall>
+            <phingcall target="phpmd-task">
                 <property name="path" value="src"/>
             </phingcall>
             <phingcall target="phpmd-task">
@@ -35,6 +38,9 @@
         <parallel threadCount="4">
             <phingcall target="phpcs-task">
                 <property name="path" value="app"/>
+            </phingcall>
+            <phingcall target="phpcs-task">
+                <property name="path" value="lib"/>
             </phingcall>
             <phingcall target="phpcs-task">
                 <property name="path" value="src"/>
