@@ -1,22 +1,22 @@
 <?php
 
-
-$finder = Symfony\CS\Finder\DefaultFinder::create()
+$finder = PhpCsFixer\Finder::create()
     ->in('app')
     ->in('spec')
     ->in('src')
-    ->in('tests')
-    ->notName('*.xml');
+    ->in('tests');
 
-return Symfony\CS\Config\Config::create()
-    ->setUsingCache(true)
-    ->level(\Symfony\CS\FixerInterface::SYMFONY_LEVEL)
-    ->fixers([
-        'short_array_syntax',
-        'align_double_arrow',
-        'align_equals',
-        'no_blank_lines_before_namespace',
-        'ordered_use',
-        'phpdoc_order'
-    ])
-    ->finder($finder);
+return PhpCsFixer\Config::create()
+    ->setRules(array(
+        '@Symfony' => true,
+        'array_syntax' => ['syntax' => 'short'],
+        'binary_operator_spaces' => [
+            'align_double_arrow' => true,
+            'align_equals' => true
+        ],
+        'ordered_imports' => true,
+        'phpdoc_order' => true,
+    ))
+    ->setCacheFile(__DIR__.'/vendor/.php_cs.cache')
+    ->setFinder($finder)
+;
