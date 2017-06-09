@@ -6,11 +6,34 @@
         <exec command="phing -l" passthru="true"/>
     </target>
 
+    <target name="test" depends="phpspec,phpunit,fix-codestandards,phpstan"/>
+
+    <target name="test2" description="Run tests in parallel">
+        <parallel threadCount="4">
+            <phingcall target="phpspec"/>
+            <phingcall target="phpunit"/>
+            <phingcall target="fix-codestandards"/>
+            <phingcall target="phpstan"/>
+        </parallel>
+    </target>
     <target name="fix-codestandards" depends="php-cs-fixer-fix,phpmd,phpcs"/>
     <target name="check-codestandards" depends="php-cs-fixer-check,phpmd,phpcs"/>
 
     <target name="php-cs-fixer-fix" description="Run php-cs-fixer fix">
-        <exec command="bin/php-cs-fixer fix" passthru="true" checkreturn="true"/>
+        <retry retrycount="3">
+            <exec command="bin/php-cs-fixer fix" passthru="true" checkreturn="true"/>
+        </retry>
+    </target>
+
+    <target name="phpspec" description="Run phpspec">
+        <exec command="bin/phpspec run" passthru="true" checkreturn="true"/>
+    </target>
+
+    <target name="phpunit" description="Run phpunit">
+        <exec command="bin/phpunit" passthru="true" checkreturn="true"/>
+    </target>
+    <target name="phpstan" description="Run phpstan">
+        <exec command="bin/phpstan analyse -l 4 -c phpstan.neon src tests" passthru="true" checkreturn="true"/>
     </target>
 
     <target name="php-cs-fixer-check" description="Run php-cs-fixer check">
@@ -51,10 +74,10 @@
         </parallel>
     </target>
 
-    <target name="phpmd-task" description="Refresh dev DB">
+    <target name="phpmd-task" description="Run php mess detector">
         <exec command="bin/phpmd ${path} text phpmd.xml" passthru="true" checkreturn="true"/>
     </target>
-    <target name="phpcs-task" description="Refresh dev DB">
+    <target name="phpcs-task" description="Run php code sniffer">
         <exec command="bin/phpcs --standard=phpcs.xml ${path} -n" passthru="true" checkreturn="true"/>
     </target>
 
