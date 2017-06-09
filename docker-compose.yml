@@ -10,7 +10,7 @@ services:
 
   nginx-dev:
     build:
-      context: ./docker/nginx-sf3-dev
+      context: ./etc/docker/nginx-sf3-dev
     container_name: nginx-dev
     volumes_from:
       - code
