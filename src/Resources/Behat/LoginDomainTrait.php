@@ -1,4 +1,5 @@
 <?php
+
 namespace Resources\Behat;
 
 use NullDev\UserBundle\Entity\User;
