@@ -3,7 +3,7 @@ version: '2'
 services:
 
   code:
-    image: msvrtan/code:dev0.1.0
+    image: msvrtan/code:0.2.0
     container_name: code
     volumes:
       - ./:/var/www
@@ -23,7 +23,7 @@ services:
 
   php7fpm:
     container_name: php7fpm
-    image: msvrtan/php7fpm-dev:dev0.1.0
+    image: msvrtan/php7fpm-dev:0.4.0
     shm_size: 256MB
     volumes_from:
       - code
@@ -61,7 +61,18 @@ services:
 
   workspace:
     container_name: workspace
-    image: msvrtan/workspace-dev:dev0.1.1
+    image: msvrtan/workspace-dev:0.4.0
+    shm_size: 256MB
+    volumes_from:
+      - code
+    links:
+      - mysql_dev
+      - mysql_test
+      - selenium
+
+  xdebug:
+    container_name: xdebug
+    image: msvrtan/xdebug-dev:0.4.0
     shm_size: 256MB
     volumes_from:
       - code
