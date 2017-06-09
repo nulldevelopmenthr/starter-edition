@@ -1,4 +1,5 @@
 <?php
+
 namespace Resources\Behat;
 
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
