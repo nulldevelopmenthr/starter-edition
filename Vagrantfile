@@ -4,13 +4,12 @@
 Vagrant.configure("2") do |config|
 
   config.vm.provider "virtualbox" do |v|
-    v.memory = 2048
-    v.cpus = 2
+    v.memory = 4096
+    v.cpus = 4
     v.name = "starteredition"
   end
 
   config.vm.box = "bento/ubuntu-16.04"
-  config.vm.box_version = "<2.3.0"
   config.vm.hostname = "starteredition"
 
   config.vm.network "private_network", ip: "10.0.1.80"
