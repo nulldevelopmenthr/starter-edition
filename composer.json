@@ -5,7 +5,8 @@
     "autoload": {
         "psr-4": {
             "": "src/",
-            "spec\\": "spec/"
+            "spec\\": "spec/",
+            "Resources\\": "lib/"
         },
         "classmap": [
             "app/AppKernel.php",
