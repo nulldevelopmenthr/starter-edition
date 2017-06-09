@@ -31,5 +31,6 @@ test:
     - ./bin/phpspec run --no-interaction
     - ./bin/behat --strict
     - ./bin/phing check-codestandards
+    - ./bin/phing phpstan
     #- ./bin/coveralls
     #- ./bin/test-reporter
