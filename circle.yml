@@ -1,36 +1,72 @@
-machine:
-  php:
-    version: 7.1.3
-  hosts:
-    www.test.ci: 127.0.0.1
-  environment:
-    COMPOSER_DISCARD_CHANGES: true
-general:
-  artifacts:
-    - "build/"
-    - "tmp/"
-dependencies:
-  pre:
-    - sudo apt-get update
-    - ./etc/circleci/setup-fpm.sh && ./etc/circleci/setup-nginx.sh
-    - ./etc/circleci/disable-xdebug.sh
-    - ./etc/circleci/setup-app-config.sh && ./etc/circleci/setup-app-permissions.sh
-  override:
-    - composer install --no-interaction
-  post:
-    - ./etc/circleci/setup-app-data.sh
-    - wget http://selenium-release.storage.googleapis.com/2.53/selenium-server-standalone-2.53.1.jar
-    - java -jar selenium-server-standalone-2.53.1.jar:
-        background: true
-  cache_directories:
-    - "vendor"
-    - "bin"
-test:
-  override:
-    - ./bin/phpunit
-    - ./bin/phpspec run --no-interaction
-    - ./bin/behat --strict
-    - ./bin/phing check-codestandards
-    - ./bin/phing phpstan
-    #- ./bin/coveralls
-    #- ./bin/test-reporter
+version: 2
+
+jobs:
+  build:
+    docker:
+      - image: msvrtan/square:0.2.1
+      - image: mysql:5.7
+        environment:
+          - MYSQL_ROOT_PASSWORD=n0p455
+          - MYSQL_DATABASE=project_name_dev
+          - MYSQL_USER=project_name
+          - MYSQL_PASSWORD=n0p455
+      - image: selenium/standalone-firefox:2.53.0
+        environment:
+          - SCREEN_WIDTH=1920
+          - SCREEN_HEIGHT=1200
+        extra_hosts:
+          - "www.project_name.loc:127.0.0.1"
+          - "test.project_name.loc:127.0.0.1"
+    working_directory: /var/www
+    parallel: 1
+    steps:
+      - checkout
+
+      - restore_cache:
+          key: cache-{{ checksum "composer.lock" }}
+      - run:
+          name: Setup
+          command: |
+            set -exu
+            ./etc/circleci2/disable-xdebug.sh
+            ./etc/circleci2/setup.sh
+            service php7.1-fpm restart
+            service nginx restart
+            SYMFONY_ENV=test composer install --prefer-dist --no-interaction
+            dockerize -wait tcp://localhost:3306 -timeout 1m
+            ./etc/circleci2/setup-data.sh
+
+      - run:
+          name: Behat
+          command: ./bin/behat
+      - run:
+          name: PhpSpec
+          command: ./bin/phpspec run --no-interaction
+      - run:
+          name: PHPUnit
+          command: ./bin/phpunit
+      - run:
+          name: Check code standards
+          command: ./bin/phing check-codestandards
+      - run:
+          name: PHPStan
+          command: ./bin/phing phpstan
+
+      - save_cache:
+          key: cache-{{ checksum "composer.lock" }}
+          paths:
+            - /var/www/vendor
+            - /var/www/bin
+
+      - store_artifacts:
+          path: build
+          destination: build
+      - store_artifacts:
+          path: /var/log/nginx
+          destination: build
+
+workflows:
+  version: 2
+  build-and-deploy:
+    jobs:
+      - build
