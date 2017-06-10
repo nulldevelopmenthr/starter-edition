@@ -35,8 +35,8 @@ trait ScreenshotTrait
 
         $filePath = '/tmp/';
 
-        if (getenv('CIRCLE_ARTIFACTS')) {
-            $filePath = getenv('CIRCLE_ARTIFACTS');
+        if (getenv('CIRCLECI')) {
+            $filePath = 'build/';
         } elseif (is_dir('/vagrant/tmp/')) {
             $filePath = '/vagrant/tmp/';
         }
