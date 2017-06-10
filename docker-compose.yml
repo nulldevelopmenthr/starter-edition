@@ -37,26 +37,26 @@ services:
       - mysql_test
 
   mysql_dev:
-    image: "mysql:5.6"
+    image: "mysql:5.7"
     container_name: mysql_dev
     expose:
       - "3306"
     environment:
-      MYSQL_ROOT_PASSWORD: root
+      MYSQL_ROOT_PASSWORD: n0p455
       MYSQL_DATABASE: project_name_dev
       MYSQL_USER: project_name
-      MYSQL_PASSWORD: pass123
+      MYSQL_PASSWORD: n0p455
 
   mysql_test:
-    image: "mysql:5.6"
+    image: "mysql:5.7"
     container_name: mysql_test
     expose:
       - "3306"
     environment:
-      MYSQL_ROOT_PASSWORD: root
+      MYSQL_ROOT_PASSWORD: n0p455
       MYSQL_DATABASE: project_name_test
       MYSQL_USER: project_name
-      MYSQL_PASSWORD: pass123
+      MYSQL_PASSWORD: n0p455
 
 
   workspace:
